@@ -1,11 +1,23 @@
-import { Button } from "./components/ui/button";
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import NavBar from './components/custom/NavBar'
 
-const App = () => {
+
+const RoutesComponent = () => {
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <NavBar />
+      <Routes>
+      </Routes>
     </div>
   );
 };
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <RoutesComponent />
+    </BrowserRouter>
+  )
+}
 
 export default App;
