@@ -59,7 +59,7 @@ const FoodOfferCard = ({
   const [liked, setLiked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-
+  const userId = localStorage.getItem("userId");
   const [formData, setFormData] = useState({
     street,
     city,
@@ -70,7 +70,6 @@ const FoodOfferCard = ({
   });
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
     if (userId && likedBy.includes(userId)) {
       setLiked(true);
     }
@@ -180,17 +179,19 @@ const FoodOfferCard = ({
           </div>
 
           <div className="absolute right-2 top-2 flex flex-col gap-4 items-center">
-            <div className="flex flex-col items-center">
-              <div
-                className="text-white text-[20px] cursor-pointer"
-                onClick={handleLikeToggle}
-              >
-                {liked ? <FaHeart /> : <FaRegHeart />}
+            {userId && (
+              <div className="flex flex-col items-center">
+                <div
+                  className="text-white text-[20px] cursor-pointer"
+                  onClick={handleLikeToggle}
+                >
+                  {liked ? <FaHeart /> : <FaRegHeart />}
+                </div>
+                <p className="text-white text-sm mt-1">
+                  {liked ? upvotes + 1 : upvotes}
+                </p>
               </div>
-              <p className="text-white text-sm mt-1">
-                {liked ? upvotes + 1 : upvotes}
-              </p>
-            </div>
+            )}
 
             {status === "Available" && (
               <div

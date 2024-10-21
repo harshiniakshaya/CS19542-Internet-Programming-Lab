@@ -9,6 +9,7 @@ import DonateFood from "./Pages/Donate/Donate";
 import { AuthProvider } from "./context/AuthProvider";
 import { PrivateRoute } from "./context/PrivateRoute";
 import MyDonations from "./Pages/MyDonations/MyDonations";
+import RecycleRequests from "./Pages/RecycleRequests/RecycleRequests";
 
 const RoutesComponent = () => {
   return (
@@ -22,6 +23,7 @@ const RoutesComponent = () => {
         <Route path="/donate" element={<PrivateRoute element={<DonateFood />} />} />
         <Route path="/recycle" element={<PrivateRoute element={<Recycle />} />} />
         <Route path="/donations" element={<PrivateRoute element={<MyDonations />} />} />
+        <Route path="/requests" element={<PrivateRoute element={<RecycleRequests />} />} />
       </Routes>
     </div>
   );

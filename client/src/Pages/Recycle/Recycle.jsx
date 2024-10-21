@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import axios from "axios";
 
 const Recycle = () => {
   const quotes = useMemo(
@@ -63,11 +64,11 @@ const Recycle = () => {
     setFormData((prevData) => ({
       ...prevData,
       deliveryMethod: method,
-      pickupDate: "", 
-      pickupTime: "", 
+      pickupDate: "",
+      pickupTime: "",
     }));
     setShowCenterDropdown(method === "center");
-    setShowPickupFields(method === "pickup"); 
+    setShowPickupFields(method === "pickup");
   };
 
   const handleNearbyCenterSelect = (center) => {
@@ -79,6 +80,18 @@ const Recycle = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  // const handleCapture = () => {
+  //   const canvas = canvasRef.current;
+  //   const video = videoRef.current;
+
+  //   canvas.width = video.videoWidth;
+  //   canvas.height = video.videoHeight;
+  //   const ctx = canvas.getContext("2d");
+  //   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  //   const imageDataUrl = canvas.toDataURL("image/png");
+  //   setFormData((prevData) => ({ ...prevData, picture: imageDataUrl }));
+  // };
+
   const handleCapture = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -87,9 +100,14 @@ const Recycle = () => {
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageDataUrl = canvas.toDataURL("image/png");
-    setFormData((prevData) => ({ ...prevData, picture: imageDataUrl }));
+    canvas.toBlob((blob) => {
+      const file = new File([blob], "donation-image.png", {
+        type: "image/png",
+      });
+      setFormData((prevData) => ({ ...prevData, picture: file }));
+    }, "image/png");
   };
+
 
   useEffect(() => {
     const initCamera = async () => {
@@ -109,6 +127,54 @@ const Recycle = () => {
     });
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      formDataToSend.append('userId', userId);
+    } else {
+      alert("User ID not found. Please log in.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/recycle",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Response:", response.data);
+      alert("Thank you for recycling! Your contribution makes a difference.");
+      setFormData({
+        latitude: "",
+        longitude: "",
+        uploadedBy: "",
+        quantity: "",
+        deliveryMethod: "",
+        nearbyCenter: "",
+        picture: null,
+        description: "",
+        street: "",
+        city: "",
+        pincode: "",
+        pickupDate: "",
+        pickupTime: "",
+      });
+    } catch (error) {
+      console.error("Error submitting recycling form:", error);
+      alert("Failed to submit recycling form. Please try again.");
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center min-h-screen mt-[80px] mb-[40px] px-5">
       <div className="quote mb-6 text-xl font-semibold text-center text-green-600">
@@ -116,19 +182,7 @@ const Recycle = () => {
       </div>
       <h1 className="text-2xl font-bold mb-6">Recycle Waste Food</h1>
 
-      <form className="space-y-8 bg-green-800 text-white py-[25px] px-[50px] rounded-2xl w-[300px] sm:w-[500px]">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="uploadedBy">Your Name</Label>
-          <Input
-            type="text"
-            id="uploadedBy"
-            name="uploadedBy"
-            value={formData.uploadedBy}
-            required
-            placeholder="Your name"
-            onChange={handleInputChange}
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-8 bg-green-800 text-white py-[25px] px-[50px] rounded-2xl w-[300px] sm:w-[500px]">
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="latitude">Latitude</Label>
@@ -301,7 +355,14 @@ const Recycle = () => {
           </div>
           <canvas ref={canvasRef} style={{ display: "none" }} />
           {formData.picture && (
-            <img src={formData.picture} alt="Captured" className="rounded-md" />
+            <div className="mt-2 flex flex-col items-center">
+              <img
+                src={URL.createObjectURL(formData.picture)} // Create a URL for the captured image
+                alt="Captured"
+                className="mt-2 rounded-md"
+              />
+              <p className="mt-2 text-sm text-white-500">Captured Image</p>
+            </div>
           )}
         </div>
 

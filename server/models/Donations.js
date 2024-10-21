@@ -30,7 +30,7 @@ const donationSchema = new mongoose.Schema({
     required: true,
   },
   expiryTime: {
-    type: Date, // Storing the expiry time as a timestamp
+    type: Date, 
     required: true,
   },
   description: {

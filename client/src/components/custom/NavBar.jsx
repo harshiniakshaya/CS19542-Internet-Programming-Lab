@@ -18,6 +18,7 @@ const navigation = [
   { name: "Donate Food", href: "donate", current: false },
   { name: "Recycle", href: "recycle", current: false },
   { name: "My Donations", href: "donations", current: false },
+  { name: "Recycle Requests", href: "requests", current: false },
 ];
 
 function classNames(...classes) {
@@ -65,7 +66,7 @@ export default function NavBar() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
-              <img alt="Your Company" src="/vite.svg" className="h-8 w-auto" />
+              {/* <img alt="Your Company" src="/vite.svg" className="h-8 w-auto" /> */}
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
