@@ -1,5 +1,5 @@
 # **FEED**
-
+![Feed](images/cover.png)
 FEED is a platform where users can share food donation events and promote community involvement through interactive maps. It also facilitates sustainable food waste management by allowing users to submit recycling requests. These requests specify whether food will be dropped off at a biogas plant or picked up by the plant. The platform ensures efficient handling of requests through admin verification and approval by biogas plant administrators, helping reduce food waste and promote eco-friendly practices.
 
 ---
@@ -14,12 +14,12 @@ FEED is a platform where users can share food donation events and promote commun
 ---
 
 ## **System Architecture**  
-![System Architecture]()   
+![System Architecture](images/system-architecture.png)   
 
 ---
 
 ## **Flow Chart**  
-![Flow Chart]()  
+![Flow Chart](images/flow-chart.png)  
   
 
 ---
