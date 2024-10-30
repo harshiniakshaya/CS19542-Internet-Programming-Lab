@@ -1,6 +1,8 @@
 // services/recycleService.js
 const Recycle = require("../models/Recycle");
 const User = require("../models/User");
+const fs = require("fs");
+const path = require("path");
 
 const createRecycle = async (recycleData) => {
   try {
@@ -15,14 +17,12 @@ const createRecycle = async (recycleData) => {
 const getAllRecycles = async () => {
   try {
     const recycles = await Recycle.find();
-    const baseUrl = `http://localhost:8080/`;
     const recyclesWithDetails = await Promise.all(
       recycles.map(async (recycle) => {
         const user = await User.findOne({ userId: recycle.userId });
-
         return {
           ...recycle.toObject(),
-          picture: baseUrl + recycle.picture.replace(/\\/g, "/"),
+          picture: recycle.picture ? recycle.picture.replace(/\\/g, "/") : null,
           userName: user ? user.name : "Unknown User",
         };
       })
@@ -32,6 +32,7 @@ const getAllRecycles = async () => {
     throw new Error("Error fetching recycles: " + error.message);
   }
 };
+
 
 const getRecycleById = async (id) => {
   try {
@@ -48,14 +49,15 @@ const getRecycleById = async (id) => {
 const getRecyclesByUserId = async (userId) => {
   try {
     const recycles = await Recycle.find({ userId });
-    const baseUrl = `http://localhost:8080/`;
+    if (recycles.length === 0) {
+      return [];
+    }
     const recyclesWithDetails = await Promise.all(
       recycles.map(async (recycle) => {
         const user = await User.findOne({ userId: recycle.userId });
-
         return {
           ...recycle.toObject(),
-          picture: baseUrl + recycle.picture.replace(/\\/g, "/"),
+          picture: recycle.picture ? recycle.picture.replace(/\\/g, "/") : null,
           userName: user ? user.name : "Unknown User",
         };
       })
@@ -66,26 +68,59 @@ const getRecyclesByUserId = async (userId) => {
   }
 };
 
+
+// const updateRecycle = async (id, recycleData) => {
+//   try {
+//     const updatedRecycle = await Recycle.findByIdAndUpdate(id, recycleData, {
+//       new: true,
+//     });
+//     if (!updatedRecycle) {
+//       throw new Error("Recycle not found for update");
+//     }
+//     return updatedRecycle;
+//   } catch (error) {
+//     throw new Error("Error updating recycle: " + error.message);
+//   }
+// };
 const updateRecycle = async (id, recycleData) => {
   try {
+    const existingRecycle = await Recycle.findById(id);
+    if (!existingRecycle) {
+      throw new Error("Recycle not found for update");
+    }
+    
+    if (!recycleData.picture) {
+      recycleData.picture = existingRecycle.picture;
+    }
+
     const updatedRecycle = await Recycle.findByIdAndUpdate(id, recycleData, {
       new: true,
     });
-    if (!updatedRecycle) {
-      throw new Error("Recycle not found for update");
-    }
+    
     return updatedRecycle;
   } catch (error) {
     throw new Error("Error updating recycle: " + error.message);
   }
 };
 
+
 const deleteRecycle = async (id) => {
   try {
-    const deletedRecycle = await Recycle.findByIdAndDelete(id);
-    if (!deletedRecycle) {
+    const recycle = await Recycle.findById(id);
+    if (!recycle) {
       throw new Error("Recycle not found for deletion");
     }
+
+    if (recycle.picture) {
+      const picturePath = recycle.picture.replace("http://localhost:8080/", "");
+      const imagePath = path.join(__dirname, "../", picturePath);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error("Error deleting image file:", err.message);
+        }
+      });
+    }
+    const deletedRecycle = await Recycle.findByIdAndDelete(id);
     return deletedRecycle;
   } catch (error) {
     throw new Error("Error deleting recycle: " + error.message);

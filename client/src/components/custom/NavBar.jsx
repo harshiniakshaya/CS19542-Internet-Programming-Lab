@@ -12,13 +12,20 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const navigation = [
+const userNavigation = [
   { name: "Home", href: "/", current: false },
   { name: "Map", href: "map", current: false },
   { name: "Donate Food", href: "donate", current: false },
   { name: "Recycle", href: "recycle", current: false },
   { name: "My Donations", href: "donations", current: false },
   { name: "Recycle Requests", href: "requests", current: false },
+];
+
+const adminNavigation = [
+  { name: "Dashboard", href: "/admin/dashboard", current: false }, 
+  { name: "Manage Requests", href: "/admin/requests", current: false }, 
+  { name: "Add Admin/Biogas Plants", href: "/admin/manage", current: false }, 
+  { name: "View Biogas Plants", href: "/admin/viewplants", current: false }, 
 ];
 
 function classNames(...classes) {
@@ -29,6 +36,8 @@ export default function NavBar() {
   const { logout } = useAuth();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const checkCookie = () => {
     const cookieExists = document.cookie
       .split("; ")
@@ -39,12 +48,17 @@ export default function NavBar() {
 
   useEffect(() => {
     setIsLoggedIn(checkCookie());
+    const role = localStorage.getItem('role');
+    if (role === "admin") {
+      setIsAdmin(true); 
+    }
   }, []);
 
   const handleLogout = () => {
     event.preventDefault();
     logout(); 
   };
+  const navigation = isAdmin ? adminNavigation : userNavigation;
 
   return (
     <Disclosure as="nav" className="bg-orange-600 fixed w-full z-50 top-0">

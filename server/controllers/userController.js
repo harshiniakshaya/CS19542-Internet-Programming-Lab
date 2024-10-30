@@ -41,7 +41,7 @@ const loginUserController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const { token, userId, message } = await userService.loginUser(
+    const { token, userId, message, role } = await userService.loginUser(
       email,
       password
     );
@@ -53,7 +53,7 @@ const loginUserController = async (req, res) => {
       sameSite: "strict",
     });
 
-    return res.status(200).json({ message, userId });
+    return res.status(200).json({ message, userId, role });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

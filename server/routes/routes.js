@@ -17,6 +17,8 @@ const {
 } = require("../controllers/donationController");
 const upload = require("../middleware/upload");
 const { createRecycleController, getAllRecyclesController, getRecycleByIdController, updateRecycleController, deleteRecycleController, getRecyclesByUserIdController } = require("../controllers/recycleController");
+const dataAggregationController = require("../controllers/dataAggregationController");
+const { createBiogasPlantController, getAllBiogasPlantsController, getBiogasPlantByIdController, updateBiogasPlantController, deleteBiogasPlantController } = require("../controllers/biogasPlantController");
 
 const router = express.Router();
 
@@ -41,5 +43,13 @@ router.get('/recycle/:id',getRecycleByIdController);
 router.put('/recycle/:id',updateRecycleController);
 router.delete('/recycle/:id',deleteRecycleController);
 router.get('/recycle/user/:userId',getRecyclesByUserIdController);
+
+router.get('/data-aggregation',dataAggregationController.getAggregatedData);
+
+router.post('/biogasplants',createBiogasPlantController);
+router.get('/biogasplants',getAllBiogasPlantsController);
+router.get('/biogasplants/:id',getBiogasPlantByIdController);
+router.put('/biogasplants/:id',updateBiogasPlantController);
+router.delete('/biogasplants/:id',deleteBiogasPlantController);
 
 module.exports = router;

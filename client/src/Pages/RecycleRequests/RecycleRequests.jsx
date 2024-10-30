@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import Loader from "@/components/custom/Loader/Loader";
 
 const RecycleRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -29,10 +30,11 @@ const RecycleRequests = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
 
+  const baseURL = "http://localhost:8080";
+
   useEffect(() => {
     const fetchRecycleRequests = async () => {
       try {
-        // Get userId from local storage
         const userId = localStorage.getItem("userId");
         console.log(userId);
         if (!userId) {
@@ -41,7 +43,7 @@ const RecycleRequests = () => {
 
         // Fetch recycle requests from the API
         const response = await axios.get(
-          `http://localhost:8080/api/recycle/user/${userId}`
+          `${baseURL}/api/recycle/user/${userId}`
         );
         setRequests(response.data);
         console.log(response.data);
@@ -61,7 +63,7 @@ const RecycleRequests = () => {
     );
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:8080/api/recycle/${id}`);
+        await axios.delete(`${baseURL}/api/recycle/${id}`);
         // Remove the deleted request from the UI
         setRequests((prevRequests) =>
           prevRequests.filter((request) => request._id !== id)
@@ -81,10 +83,8 @@ const RecycleRequests = () => {
 
   const handleSaveEdit = async () => {
     try {
-      await axios.put(
-        `http://localhost:8080/api/recycle/${editData._id}`,
-        editData
-      );
+      console.log(editData);
+      await axios.put(`${baseURL}/api/recycle/${editData._id}`, editData);
       setRequests((prevRequests) =>
         prevRequests.map((request) =>
           request._id === editData._id ? editData : request
@@ -100,7 +100,11 @@ const RecycleRequests = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader />
+      </div>
+    );
   }
 
   if (error) {
@@ -110,7 +114,6 @@ const RecycleRequests = () => {
   return (
     <div className="flex flex-col items-center min-h-screen mt-[80px] mb-[40px] px-[40px]">
       <Table className="bg-green-700 text-white">
-        
         <TableHeader className="bg-orange-600 cursor-pointer font-extrabold">
           <TableRow>
             <TableHead className="w-[100px]">S.NO </TableHead>
@@ -120,6 +123,7 @@ const RecycleRequests = () => {
             <TableHead>QUANTITY</TableHead>
             <TableHead>DESCRIPTION</TableHead>
             <TableHead>DELIVERY METHOD</TableHead>
+            <TableHead>CENTER NAME</TableHead>
             {/* <TableHead>CENTER NAME</TableHead>
             <TableHead>PICKUP DATE</TableHead>
             <TableHead>PICKUP TIME</TableHead> */}
@@ -132,20 +136,29 @@ const RecycleRequests = () => {
         <TableBody>
           {requests.map((request, index) => (
             <TableRow key={request._id} className="py-[100px]">
-              <TableCell className="font-medium py-[20px] text-[15px]">{index + 1}</TableCell>
+              <TableCell className="font-medium py-[20px] text-[15px]">
+                {index + 1}
+              </TableCell>
               <TableCell className="text-[15px]">{request.street}</TableCell>
               <TableCell className="text-[15px]">{request.city}</TableCell>
               <TableCell className="text-[15px]">{request.pincode}</TableCell>
               <TableCell className="text-[15px]">{request.quantity}</TableCell>
-              <TableCell className="text-[15px]">{request.description}</TableCell>
-              <TableCell className="text-[15px]">{request.deliveryMethod}</TableCell>
+              <TableCell className="text-[15px]">
+                {request.description}
+              </TableCell>
+              <TableCell className="text-[15px]">
+                {request.deliveryMethod}
+              </TableCell>
+              <TableCell className="text-[15px]">{request.center}</TableCell>
               {/* <TableCell>{request.nearbyCenter}</TableCell>
               <TableCell>{request.pickupDate}</TableCell>
               <TableCell>{request.pickupTime}</TableCell> */}
               <TableCell>
                 {request.picture ? (
                   <button
-                    onClick={() => setSelectedImage(request.picture)}
+                    onClick={() =>
+                      setSelectedImage(`${baseURL}/${request.picture}`)
+                    }
                     className="text-white text-[15px]"
                   >
                     View Picture
@@ -155,10 +168,23 @@ const RecycleRequests = () => {
                 )}
               </TableCell>
               <TableCell>
-                <span className="bg-orange-600 px-5 py-1 rounded-[20px] text-[15px]">
+                <span
+                  className={`px-5 py-1 rounded-[20px] text-[15px] ${
+                    request.status === "Submitted"
+                      ? "bg-orange-600"
+                      : request.status === "Acknowledged"
+                      ? "bg-yellow-500"
+                      : request.status === "Rejected"
+                      ? "bg-red-700"
+                      : request.status === "Accepted"
+                      ? "bg-green-500"
+                      : ""
+                  }`}
+                >
                   {request.status}
                 </span>
               </TableCell>
+
               <TableCell
                 className="cursor-pointer text-[25px]"
                 onClick={() => handleEdit(request)}

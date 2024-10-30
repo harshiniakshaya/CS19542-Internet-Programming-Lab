@@ -8,7 +8,7 @@ const generateUserId = () => {
 };
 
 const createUser = async (userData) => {
-  const { name, email, password } = userData;
+  const { name, email, password, role = "user" } = userData;
   const userId = generateUserId();
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -18,6 +18,7 @@ const createUser = async (userData) => {
     name,
     email,
     password: hashedPassword,
+    role,
   });
   return await newUser.save();
 };
@@ -50,11 +51,11 @@ const loginUser = async (email, password) => {
   }
 
   const token = jwt.sign(
-    { userId: user.userId, email: user.email },
+    { userId: user.userId, email: user.email, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: "1h" }
   );
-  return { token, message: "Login successful", userId: user.userId };
+  return { token, message: "Login successful", userId: user.userId, role: user.role };
 };
 
 const logoutUser = (res) => {

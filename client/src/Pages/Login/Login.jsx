@@ -29,8 +29,9 @@ const Login = () => {
       });
       console.log("User logged in:", response.data); 
       localStorage.setItem('userId', response.data.userId);
+      localStorage.setItem('role', response.data.role);
       login();
-      const redirectPath = localStorage.getItem('redirectPath') || '/';
+      const redirectPath = response.data.role === 'admin' ? '/admin/dashboard' : (localStorage.getItem('redirectPath') || '/');
       localStorage.removeItem('redirectPath'); 
       navigate(redirectPath);
       window.location.reload();

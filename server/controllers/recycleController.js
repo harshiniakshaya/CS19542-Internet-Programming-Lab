@@ -9,7 +9,7 @@ const {
 
 const createRecycleController = async (req, res) => {
   try {
-    const picturePath = req.file ? req.file.path : null;
+    const picturePath = req.file ? `uploads/${req.file.filename}` : null;
     const recycleData = {
       ...req.body,
       picture: picturePath,
@@ -67,6 +67,7 @@ const getRecyclesByUserIdController = async (req, res) => {
 
 const updateRecycleController = async (req, res) => {
   try {
+    console.log(req.body)
     const updatedRecycle = await updateRecycle(req.params.id, req.body);
     if (!updatedRecycle) {
       return res.status(404).json({ error: "Recycle not found" });

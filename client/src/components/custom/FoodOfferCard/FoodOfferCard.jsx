@@ -193,7 +193,7 @@ const FoodOfferCard = ({
               </div>
             )}
 
-            {status === "Available" && (
+            {userId &&  (
               <div
                 className="text-white text-[20px] cursor-pointer"
                 onClick={handleShare}
@@ -201,7 +201,7 @@ const FoodOfferCard = ({
                 <IoMdShare />
               </div>
             )}
-            <div
+            {userId && <div
               className="text-white text-[20px] cursor-pointer"
               onClick={() => {
                 const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
@@ -209,7 +209,7 @@ const FoodOfferCard = ({
               }}
             >
               <FaRegMap />
-            </div>
+            </div>}
             {edit && (
               <>
                 <div

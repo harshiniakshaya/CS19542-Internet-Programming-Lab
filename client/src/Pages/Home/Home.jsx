@@ -1,9 +1,12 @@
 import FoodOfferCard from "@/components/custom/FoodOfferCard/FoodOfferCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Loader from "@/components/custom/Loader/Loader";
 
 const Home = () => {
   const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const formatTimeAgo = (date) => {
     const now = new Date();
@@ -51,16 +54,26 @@ const Home = () => {
             downvotes: 0,
             status: isExpired ? "Completed" : "Available",
             edit: canEdit,
-            likedBy: offer.likedBy
+            likedBy: offer.likedBy,
           };
         });
         setOffers(data);
       } catch (error) {
         console.error("Error fetching food offers", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchFoodOffers();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-wrap justify-center gap-6 mt-[80px] mb-[40px] px-5">

@@ -43,7 +43,7 @@ const Recycle = () => {
     uploadedBy: "",
     quantity: "",
     deliveryMethod: "",
-    nearbyCenter: "",
+    center: "",
     picture: null,
     description: "",
     street: "",
@@ -67,12 +67,12 @@ const Recycle = () => {
       pickupDate: "",
       pickupTime: "",
     }));
-    setShowCenterDropdown(method === "center");
-    setShowPickupFields(method === "pickup");
+    setShowCenterDropdown(method === "Drop-off");
+    setShowPickupFields(method === "Pickup");
   };
 
   const handleNearbyCenterSelect = (center) => {
-    setFormData((prevData) => ({ ...prevData, nearbyCenter: center }));
+    setFormData((prevData) => ({ ...prevData, center: center }));
   };
 
   const handleInputChange = (e) => {
@@ -153,22 +153,23 @@ const Recycle = () => {
       );
 
       console.log("Response:", response.data);
+
       alert("Thank you for recycling! Your contribution makes a difference.");
-      setFormData({
-        latitude: "",
-        longitude: "",
-        uploadedBy: "",
-        quantity: "",
-        deliveryMethod: "",
-        nearbyCenter: "",
-        picture: null,
-        description: "",
-        street: "",
-        city: "",
-        pincode: "",
-        pickupDate: "",
-        pickupTime: "",
-      });
+      // setFormData({
+      //   latitude: "",
+      //   longitude: "",
+      //   uploadedBy: "",
+      //   quantity: "",
+      //   deliveryMethod: "",
+      //   center: "",
+      //   picture: null,
+      //   description: "",
+      //   street: "",
+      //   city: "",
+      //   pincode: "",
+      //   pickupDate: "",
+      //   pickupTime: "",
+      // });
     } catch (error) {
       console.error("Error submitting recycling form:", error);
       alert("Failed to submit recycling form. Please try again.");
@@ -279,11 +280,11 @@ const Recycle = () => {
             onValueChange={handleDeliveryMethodChange}
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="center" id="center-option" />
+              <RadioGroupItem value="Drop-off" id="center-option" />
               <Label htmlFor="center-option">Drop-off at nearby center</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="pickup" id="pickup-option" />
+              <RadioGroupItem value="Pickup" id="pickup-option" />
               <Label htmlFor="pickup-option">Request for pickup</Label>
             </div>
           </RadioGroup>
@@ -294,7 +295,7 @@ const Recycle = () => {
             <Label htmlFor="nearbyCenter">Select Nearby Center</Label>
             <DropdownMenu>
               <DropdownMenuTrigger className="px-4 py-2 border border-white rounded-md w-full">
-                {formData.nearbyCenter || "Select Nearby Center"}
+                {formData.center || "Select Nearby Center"}
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-green-800 border-white text-white">
                 <DropdownMenuLabel>Nearby Centers</DropdownMenuLabel>
