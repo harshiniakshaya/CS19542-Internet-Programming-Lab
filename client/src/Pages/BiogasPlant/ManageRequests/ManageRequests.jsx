@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Table,
@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Loader from "@/components/custom/Loader/Loader";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -25,20 +24,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const ManageRequests = () => {
+const BiogasPlantRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const baseURL = "http://localhost:8080";
-
   useEffect(() => {
-    const fetchAllRequests = async () => {
+    const fetchUserDataAndRequests = async () => {
       try {
-        const response = await axios.get(`${baseURL}/api/recycle`);
-        setRequests(response.data);
+        // Get user ID from local storage
+        const userId = localStorage.getItem("userId");
+
+        // Fetch user details to get the name
+        const userResponse = await axios.get(`${baseURL}/api/users/${userId}`);
+        const { name } = userResponse.data;
+        setUserName(name);
+
+        // Fetch recycle requests and filter them by user name
+        const requestsResponse = await axios.get(`${baseURL}/api/recycle`);
+        const filteredRequests = requestsResponse.data.filter(
+          (request) => request.center === name
+        );
+        setRequests(filteredRequests);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -46,7 +56,7 @@ const ManageRequests = () => {
       }
     };
 
-    fetchAllRequests();
+    fetchUserDataAndRequests();
   }, []);
 
   const updateRequestStatus = async (id, status) => {
@@ -106,9 +116,7 @@ const ManageRequests = () => {
               <TableCell className="text-[15px]">
                 {request.deliveryMethod}
               </TableCell>
-              <TableCell className="text-[15px]">
-                {request.center}
-              </TableCell>
+              <TableCell className="text-[15px]">{request.center}</TableCell>
               <TableCell>
                 {request.picture ? (
                   <button
@@ -124,9 +132,6 @@ const ManageRequests = () => {
                 )}
               </TableCell>
               <TableCell>
-                {/* <span className="bg-orange-600 px-5 py-1 rounded-[20px] text-[15px]">
-                  {request.status}
-                </span> */}
                 <Select
                   onValueChange={(value) =>
                     updateRequestStatus(request._id, value)
@@ -134,12 +139,10 @@ const ManageRequests = () => {
                 >
                   <SelectTrigger
                     className={`w-[180px] ${
-                      request.status === "Acknowledged"
-                        ? "bg-yellow-400"
+                      request.status === "Accepted"
+                        ? "bg-green-600"
                         : request.status === "Rejected"
                         ? "bg-red-600"
-                        : request.status === "Accepted"
-                        ? "bg-green-600"
                         : "bg-orange-600"
                     } text-white`}
                   >
@@ -150,7 +153,7 @@ const ManageRequests = () => {
                   <SelectContent className="bg-orange-600 text-white">
                     <SelectGroup>
                       <SelectLabel>Status</SelectLabel>
-                      <SelectItem value="Acknowledged">Acknowledged</SelectItem>
+                      <SelectItem value="Accepted">Accepted</SelectItem>
                       <SelectItem value="Rejected">Rejected</SelectItem>
                     </SelectGroup>
                   </SelectContent>
@@ -183,4 +186,4 @@ const ManageRequests = () => {
   );
 };
 
-export default ManageRequests;
+export default BiogasPlantRequests;

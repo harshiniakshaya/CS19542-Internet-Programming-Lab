@@ -62,6 +62,7 @@ const ViewBiogasPlants = () => {
   const [editData, setEditData] = useState({
     name: "",
     status: "",
+    email: "",
     contactPerson: "",
     phone: "",
     address: {
@@ -127,6 +128,7 @@ const ViewBiogasPlants = () => {
       _id: plant._id,
       name: plant.name,
       status: plant.status,
+      email: plant.email,
       contactPerson: plant.contactPerson,
       phone: plant.phone,
       address: {
@@ -166,6 +168,7 @@ const ViewBiogasPlants = () => {
             <TableHead className="w-[100px]">Plant ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Contact Person</TableHead>
             <TableHead className="">Phone</TableHead>
             <TableHead>Street</TableHead>
@@ -184,6 +187,7 @@ const ViewBiogasPlants = () => {
               <TableCell className="font-medium">{plant.plantId}</TableCell>
               <TableCell>{plant.name}</TableCell>
               <TableCell>{plant.status}</TableCell>
+              <TableCell>{plant.email}</TableCell>
               <TableCell>{plant.contactPerson}</TableCell>
               <TableCell>{plant.phone}</TableCell>
               <TableCell>{plant.address?.street}</TableCell>
@@ -240,6 +244,16 @@ const ViewBiogasPlants = () => {
                   value={editData.status}
                   onChange={(e) =>
                     setEditData((prev) => ({ ...prev, status: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  value={editData.email}
+                  onChange={(e) =>
+                    setEditData((prev) => ({ ...prev, email: e.target.value }))
                   }
                 />
               </div>

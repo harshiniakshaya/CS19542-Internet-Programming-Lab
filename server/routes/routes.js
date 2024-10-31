@@ -45,6 +45,7 @@ router.delete('/recycle/:id',deleteRecycleController);
 router.get('/recycle/user/:userId',getRecyclesByUserIdController);
 
 router.get('/data-aggregation',dataAggregationController.getAggregatedData);
+router.get('/biogasplants/data-aggregation/:userId', dataAggregationController.getRecycleDataByUserId);
 
 router.post('/biogasplants',createBiogasPlantController);
 router.get('/biogasplants',getAllBiogasPlantsController);

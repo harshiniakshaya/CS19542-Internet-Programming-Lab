@@ -28,6 +28,11 @@ const adminNavigation = [
   { name: "View Biogas Plants", href: "/admin/viewplants", current: false }, 
 ];
 
+const biogasPlantNavigation = [
+  { name: "Dashboard", href: "/biogasplant/dashboard", current: false }, 
+  { name: "Manage Requests", href: "/biogasplant/requests", current: false }, 
+];
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -36,21 +41,21 @@ export default function NavBar() {
   const { logout } = useAuth();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkCookie = () => {
     const cookieExists = document.cookie
       .split("; ")
       .find((row) => row.startsWith("auth")); 
-
     return !!cookieExists;
   };
 
   useEffect(() => {
     setIsLoggedIn(checkCookie());
     const role = localStorage.getItem('role');
-    if (role === "admin") {
-      setIsAdmin(true); 
+    if (role) {
+      setUserRole(role.toLowerCase());
     }
   }, []);
 
@@ -58,7 +63,20 @@ export default function NavBar() {
     event.preventDefault();
     logout(); 
   };
-  const navigation = isAdmin ? adminNavigation : userNavigation;
+
+  const getNavigationItems = () => {
+    switch (userRole) {
+      case 'admin':
+        return adminNavigation;
+      case 'biogasplant':
+        return biogasPlantNavigation;
+      case 'user':
+      default:
+        return userNavigation;
+    }
+  };
+
+  const navigation = getNavigationItems();
 
   return (
     <Disclosure as="nav" className="bg-orange-600 fixed w-full z-50 top-0">

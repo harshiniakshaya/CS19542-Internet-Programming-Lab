@@ -54,6 +54,8 @@ const Recycle = () => {
   });
 
   const nearbyCenters = ["Center A", "Center B", "Center C"];
+  const [activeBiogasPlants, setActiveBiogasPlants] = useState([]);
+  const [biogasCenters, setBiogasCenters] = useState([]);
   const [showCenterDropdown, setShowCenterDropdown] = useState(false);
   const [showPickupFields, setShowPickupFields] = useState(false);
 
@@ -61,12 +63,27 @@ const Recycle = () => {
   const canvasRef = useRef(null);
 
   const handleDeliveryMethodChange = (method) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      deliveryMethod: method,
-      pickupDate: "",
-      pickupTime: "",
-    }));
+    setFormData((prevData) => {
+      const newData = {
+        ...prevData,
+        deliveryMethod: method,
+        pickupDate: "",
+        pickupTime: "",
+      };
+
+      // If pickup is selected, automatically assign an active biogas center
+      if (method === "Pickup" && activeBiogasPlants.length > 0) {
+        // Simple round-robin selection - you could implement more sophisticated allocation logic
+        const randomIndex = Math.floor(
+          Math.random() * activeBiogasPlants.length
+        );
+        newData.center = activeBiogasPlants[randomIndex];
+      } else {
+        newData.center = "";
+      }
+
+      return newData;
+    });
     setShowCenterDropdown(method === "Drop-off");
     setShowPickupFields(method === "Pickup");
   };
@@ -108,8 +125,28 @@ const Recycle = () => {
     }, "image/png");
   };
 
-
   useEffect(() => {
+    const fetchBiogasCenters = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/biogasplants"
+        );
+        const allPlants = response.data;
+
+        const activePlants = allPlants
+          .filter((plant) => plant.status === "active")
+          .map((plant) => plant.name);
+
+        const allPlantNames = allPlants.map(plant => plant.name);
+
+        setBiogasCenters(allPlantNames);
+        setActiveBiogasPlants(activePlants);
+      } catch (error) {
+        console.error("Error fetching biogas centers:", error);
+      }
+    };
+
+    fetchBiogasCenters();
     const initCamera = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
@@ -131,12 +168,17 @@ const Recycle = () => {
     e.preventDefault();
     const formDataToSend = new FormData();
 
+    if (formData.deliveryMethod === "Pickup" && !formData.center && activeBiogasPlants.length > 0) {
+      const randomIndex = Math.floor(Math.random() * activeBiogasPlants.length);
+      formData.center = activeBiogasPlants[randomIndex];
+    }
+
     for (const key in formData) {
       formDataToSend.append(key, formData[key]);
     }
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem("userId");
     if (userId) {
-      formDataToSend.append('userId', userId);
+      formDataToSend.append("userId", userId);
     } else {
       alert("User ID not found. Please log in.");
       return;
@@ -183,8 +225,10 @@ const Recycle = () => {
       </div>
       <h1 className="text-2xl font-bold mb-6">Recycle Waste Food</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-8 bg-green-800 text-white py-[25px] px-[50px] rounded-2xl w-[300px] sm:w-[500px]">
-
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 bg-green-800 text-white py-[25px] px-[50px] rounded-2xl w-[300px] sm:w-[500px]"
+      >
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="latitude">Latitude</Label>
           <Input
@@ -300,7 +344,7 @@ const Recycle = () => {
               <DropdownMenuContent className="bg-green-800 border-white text-white">
                 <DropdownMenuLabel>Nearby Centers</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {nearbyCenters.map((center) => (
+                {biogasCenters.map((center) => (
                   <DropdownMenuItem
                     key={center}
                     onClick={() => handleNearbyCenterSelect(center)}

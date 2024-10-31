@@ -67,6 +67,8 @@ const Manage = () => {
   const [plantName, setPlantName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
   const [phone, setPhone] = useState("");
+  const [plantEmail, setPlantEmail] = useState("");
+  const [plantPassword, setPlantPassword] = useState("");
   const [address, setAddress] = useState({
     street: "",
     city: "",
@@ -87,7 +89,7 @@ const Manage = () => {
       errors.adminEmail = "Invalid email format";
     if (!adminPassword) errors.adminPassword = "Admin password is required";
 
-    console.log("Admin form validation errors:", errors); 
+    console.log("Admin form validation errors:", errors);
     return errors;
   };
 
@@ -98,6 +100,10 @@ const Manage = () => {
     if (!phone) errors.phone = "Phone number is required";
     else if (!/^\d{10}$/.test(phone))
       errors.phone = "Phone number must be 10 digits";
+    if (!plantEmail) errors.plantEmail = "Biogas Plant's email is required";
+    else if (!/^\S+@\S+\.\S+$/.test(plantEmail))
+      errors.plantEmail = "Invalid email format";
+    if (!plantPassword) errors.plantPassword = "Password is required";
     if (!address.street) errors.street = "Street is required";
     if (!address.city) errors.city = "City is required";
     if (!address.state) errors.state = "State is required";
@@ -108,7 +114,7 @@ const Manage = () => {
       errors.collectionMethods =
         "At least one collection method must be selected";
 
-    console.log("Plant form validation errors:", errors); 
+    console.log("Plant form validation errors:", errors);
     return errors;
   };
 
@@ -127,9 +133,9 @@ const Manage = () => {
     );
   };
 
-  const handleAdminSubmit = async(e) => {
+  const handleAdminSubmit = async (e) => {
     e.preventDefault();
-    console.log("Admin form submitted"); 
+    console.log("Admin form submitted");
     const errors = validateAdminForm();
     if (Object.keys(errors).length) {
       setAdminErrors(errors);
@@ -140,7 +146,7 @@ const Manage = () => {
           name: adminName,
           email: adminEmail,
           password: adminPassword,
-          role: "admin"
+          role: "admin",
         });
         alert("Admin added successfully!");
         console.log(response.data);
@@ -151,7 +157,7 @@ const Manage = () => {
     }
   };
 
-  const handlePlantSubmit = async(e) => {
+  const handlePlantSubmit = async (e) => {
     e.preventDefault();
     const errors = validatePlantForm();
     if (Object.keys(errors).length) {
@@ -163,23 +169,28 @@ const Manage = () => {
           name: plantName,
           contactPerson,
           phone,
+          email: plantEmail,
+          password: plantPassword,
           address,
           acceptedWasteTypes: wasteTypes,
           collectionMethods,
         });
         alert("Plant added successfully!");
         console.log(response.data);
+        
       } catch (error) {
         console.error("Failed to add plant:", error);
         alert("Error adding plant. Please try again.");
       }
       console.log("Managing Biogas Plant:", {
-        plantName,
-        contactPerson,
-        phone,
-        address,
-        wasteTypes,
-        collectionMethods,
+        name: plantName,
+          contactPerson,
+          phone,
+          email: plantEmail,
+          password: plantPassword,
+          address,
+          acceptedWasteTypes: wasteTypes,
+          collectionMethods,
       });
     }
   };
@@ -301,6 +312,36 @@ const Manage = () => {
                   {plantErrors.plantName && (
                     <p className="text-red-600 text-xs">
                       {plantErrors.plantName}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="plantEmail">Biogas Plant Email</Label>
+                  <Input
+                    id="plantEmail"
+                    type="email"
+                    placeholder="Enter Biogas Plant email"
+                    value={plantEmail}
+                    onChange={(e) => setPlantEmail(e.target.value)}
+                  />
+                  {plantErrors.plantEmail && (
+                    <p className="text-red-600 text-xs">
+                      {plantErrors.plantEmail}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="plantPassword">Password</Label>
+                  <Input
+                    id="plantPassword"
+                    type="password"
+                    placeholder="Enter password"
+                    value={plantPassword}
+                    onChange={(e) => setPlantPassword(e.target.value)}
+                  />
+                  {plantErrors.plantPassword && (
+                    <p className="text-red-600 text-xs">
+                      {plantErrors.plantPassword}
                     </p>
                   )}
                 </div>
