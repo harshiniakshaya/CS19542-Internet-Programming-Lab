@@ -150,6 +150,9 @@ const Manage = () => {
         });
         alert("Admin added successfully!");
         console.log(response.data);
+        setAdminName("");
+        setAdminEmail("");
+        setAdminPassword("");
       } catch (error) {
         console.error("Failed to add admin:", error);
         alert("Error adding admin. Please try again.");
@@ -165,32 +168,43 @@ const Manage = () => {
     } else {
       setPlantErrors({});
       try {
-        const response = await axios.post("http://localhost:8080/api/biogasplants", {
-          name: plantName,
-          contactPerson,
-          phone,
-          email: plantEmail,
-          password: plantPassword,
-          address,
-          acceptedWasteTypes: wasteTypes,
-          collectionMethods,
-        });
+        const response = await axios.post(
+          "http://localhost:8080/api/biogasplants",
+          {
+            name: plantName,
+            contactPerson,
+            phone,
+            email: plantEmail,
+            password: plantPassword,
+            address,
+            acceptedWasteTypes: wasteTypes,
+            collectionMethods,
+          }
+        );
         alert("Plant added successfully!");
+        setPlantName("");
+        setContactPerson("");
+        setPhone("");
+        setPlantEmail("");
+        setPlantPassword("");
+        setAddress({ street: "", city: "", state: "", zipCode: "" });
+        setWasteTypes([]);
+        setSelectedWasteTypes([]);
+        setCollectionMethods([]);
         console.log(response.data);
-        
       } catch (error) {
         console.error("Failed to add plant:", error);
         alert("Error adding plant. Please try again.");
       }
       console.log("Managing Biogas Plant:", {
         name: plantName,
-          contactPerson,
-          phone,
-          email: plantEmail,
-          password: plantPassword,
-          address,
-          acceptedWasteTypes: wasteTypes,
-          collectionMethods,
+        contactPerson,
+        phone,
+        email: plantEmail,
+        password: plantPassword,
+        address,
+        acceptedWasteTypes: wasteTypes,
+        collectionMethods,
       });
     }
   };

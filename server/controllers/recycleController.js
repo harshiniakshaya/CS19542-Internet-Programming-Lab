@@ -52,12 +52,13 @@ const getRecyclesByUserIdController = async (req, res) => {
   try {
     const { userId } = req.params;
     const recycles = await getRecyclesByUserId(userId);
-    if (recycles.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No recycles found for this user" });
-    }
-
+    // console.log(recycles)
+    // if (recycles.length === 0) {
+    //   console.log("no")
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No recycles found for this user" });
+    // }
     res.status(200).json(recycles);
   } catch (error) {
     console.error(error);

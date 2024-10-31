@@ -101,5 +101,4 @@ module.exports = {
   getBiogasPlantById,
   updateBiogasPlant,
   deleteBiogasPlant,
-
 };

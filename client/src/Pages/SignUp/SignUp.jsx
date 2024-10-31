@@ -26,6 +26,7 @@ const Signup = () => {
         password,
       });
       console.log("User created:", response.data);
+      alert("User created, kindly login!")
       navigate("/login");
     } catch (error) {
       console.error("Error creating user:", error);

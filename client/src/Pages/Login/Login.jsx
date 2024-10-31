@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const Login = () => {
   const { login } = useAuth();
@@ -27,19 +27,25 @@ const Login = () => {
         email,
         password,
       });
-      console.log("User logged in:", response.data); 
-      localStorage.setItem('userId', response.data.userId);
-      localStorage.setItem('role', response.data.role);
+      console.log("User logged in:", response.data);
+      localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("role", response.data.role);
       login();
-      const redirectPath = response.data.role === 'admin' ? '/admin/dashboard' : (localStorage.getItem('redirectPath') || '/');
-      localStorage.removeItem('redirectPath'); 
+      let redirectPath;
+      if (response.data.role === "admin") {
+        redirectPath = "/admin/dashboard";
+      } else if (response.data.role === "biogasplant") {
+        redirectPath = "/biogasplant/dashboard";
+      } else {
+        redirectPath = localStorage.getItem("redirectPath") || "/";
+      }
+      localStorage.removeItem("redirectPath");
       navigate(redirectPath);
       window.location.reload();
     } catch (error) {
-      alert(error.response.data.message)
+      alert(error.response.data.message);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen bg-orange-600">

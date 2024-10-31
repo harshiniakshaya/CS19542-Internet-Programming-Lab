@@ -46,8 +46,8 @@ const RecycleRequests = () => {
           `${baseURL}/api/recycle/user/${userId}`
         );
         setRequests(response.data);
-        console.log(response.data);
       } catch (err) {
+        setRequests([])
         setError(err.message);
       } finally {
         setLoading(false);
@@ -113,7 +113,7 @@ const RecycleRequests = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen mt-[80px] mb-[40px] px-[40px]">
-      <Table className="bg-green-700 text-white">
+    {requests.length===0 ? (<p>No recycle requests are made</p>):(<Table className="bg-green-700 text-white">
         <TableHeader className="bg-orange-600 cursor-pointer font-extrabold">
           <TableRow>
             <TableHead className="w-[100px]">S.NO </TableHead>
@@ -124,9 +124,6 @@ const RecycleRequests = () => {
             <TableHead>DESCRIPTION</TableHead>
             <TableHead>DELIVERY METHOD</TableHead>
             <TableHead>CENTER NAME</TableHead>
-            {/* <TableHead>CENTER NAME</TableHead>
-            <TableHead>PICKUP DATE</TableHead>
-            <TableHead>PICKUP TIME</TableHead> */}
             <TableHead>PICTURE</TableHead>
             <TableHead>STATUS</TableHead>
             <TableHead>EDIT</TableHead>
@@ -150,9 +147,6 @@ const RecycleRequests = () => {
                 {request.deliveryMethod}
               </TableCell>
               <TableCell className="text-[15px]">{request.center}</TableCell>
-              {/* <TableCell>{request.nearbyCenter}</TableCell>
-              <TableCell>{request.pickupDate}</TableCell>
-              <TableCell>{request.pickupTime}</TableCell> */}
               <TableCell>
                 {request.picture ? (
                   <button
@@ -200,7 +194,89 @@ const RecycleRequests = () => {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table>)}
+      {/* <Table className="bg-green-700 text-white">
+        <TableHeader className="bg-orange-600 cursor-pointer font-extrabold">
+          <TableRow>
+            <TableHead className="w-[100px]">S.NO </TableHead>
+            <TableHead>STREET</TableHead>
+            <TableHead>CITY</TableHead>
+            <TableHead>PINCODE</TableHead>
+            <TableHead>QUANTITY</TableHead>
+            <TableHead>DESCRIPTION</TableHead>
+            <TableHead>DELIVERY METHOD</TableHead>
+            <TableHead>CENTER NAME</TableHead>
+            <TableHead>PICTURE</TableHead>
+            <TableHead>STATUS</TableHead>
+            <TableHead>EDIT</TableHead>
+            <TableHead>DELETE</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {requests.map((request, index) => (
+            <TableRow key={request._id} className="py-[100px]">
+              <TableCell className="font-medium py-[20px] text-[15px]">
+                {index + 1}
+              </TableCell>
+              <TableCell className="text-[15px]">{request.street}</TableCell>
+              <TableCell className="text-[15px]">{request.city}</TableCell>
+              <TableCell className="text-[15px]">{request.pincode}</TableCell>
+              <TableCell className="text-[15px]">{request.quantity}</TableCell>
+              <TableCell className="text-[15px]">
+                {request.description}
+              </TableCell>
+              <TableCell className="text-[15px]">
+                {request.deliveryMethod}
+              </TableCell>
+              <TableCell className="text-[15px]">{request.center}</TableCell>
+              <TableCell>
+                {request.picture ? (
+                  <button
+                    onClick={() =>
+                      setSelectedImage(`${baseURL}/${request.picture}`)
+                    }
+                    className="text-white text-[15px]"
+                  >
+                    View Picture
+                  </button>
+                ) : (
+                  "No Picture"
+                )}
+              </TableCell>
+              <TableCell>
+                <span
+                  className={`px-5 py-1 rounded-[20px] text-[15px] ${
+                    request.status === "Submitted"
+                      ? "bg-orange-600"
+                      : request.status === "Acknowledged"
+                      ? "bg-yellow-500"
+                      : request.status === "Rejected"
+                      ? "bg-red-700"
+                      : request.status === "Accepted"
+                      ? "bg-green-500"
+                      : ""
+                  }`}
+                >
+                  {request.status}
+                </span>
+              </TableCell>
+
+              <TableCell
+                className="cursor-pointer text-[25px]"
+                onClick={() => handleEdit(request)}
+              >
+                <MdEdit />
+              </TableCell>
+              <TableCell
+                className="cursor-pointer text-[25px]"
+                onClick={() => handleDelete(request._id)}
+              >
+                <MdDelete />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table> */}
       {selectedImage && (
         <Dialog
           open={!!selectedImage}

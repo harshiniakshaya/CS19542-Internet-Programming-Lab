@@ -12,14 +12,16 @@ const MyDonations = () => {
     const differenceInMinutes = Math.floor(differenceInMs / 1000 / 60);
 
     if (differenceInMinutes < 60) {
-      return `${differenceInMinutes} minute${
-        differenceInMinutes !== 1 ? "s" : ""
-      } ago`;
-    } else {
+      return `${differenceInMinutes} minute${differenceInMinutes !== 1 ? "s" : ""} ago`;
+    } else if (differenceInMinutes < 1440) {
       const differenceInHours = Math.floor(differenceInMinutes / 60);
-      return `${differenceInHours} hour${
-        differenceInHours !== 1 ? "s" : ""
-      } ago`;
+      return `${differenceInHours} hour${differenceInHours !== 1 ? "s" : ""} ago`;
+    } else if (differenceInMinutes < 43200) {
+      const differenceInDays = Math.floor(differenceInMinutes / 1440);
+      return `${differenceInDays} day${differenceInDays !== 1 ? "s" : ""} ago`;
+    } else {
+      const differenceInMonths = Math.floor(differenceInMinutes / 43200);
+      return `${differenceInMonths} month${differenceInMonths !== 1 ? "s" : ""} ago`;
     }
   };
 
